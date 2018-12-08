@@ -27,3 +27,12 @@ func TestDog_Bark_unmuzzled(t *testing.T) {
 func TestSpeak_spanish(t *testing.T) {
 
 }
+
+func TestColor(t *testing.T) {
+	arg := "blue"
+	want := "#0000FF"
+	got := Color(arg)
+	if got != want {
+		t.Errorf("Color(%s) = %s; want %s", arg, got, want)
+	}
+}
