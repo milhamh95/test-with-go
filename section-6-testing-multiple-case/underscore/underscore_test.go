@@ -1,6 +1,9 @@
 package underscore
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 type testCase struct {
 	arg  string
@@ -42,14 +45,15 @@ func TestCamel(t *testing.T) {
 	}{
 		// TODO: Add test cases.
 		{"simple", args{"thisIsACamelCaseString"}, "this_is_a_camel_case_string"},
-		{"spaces", args{"with a space"}, "with a space"},
+		{"spaces", args{"with a space"}, "with a space "},
 		{"ends with capital", args{"endsWithA"}, "ends_with_a"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := Camel(tt.args.str); got != tt.want {
-				t.Errorf("Camel(%v) = %v, want %v", tt.args.str, got, tt.want)
+				t.Fatalf("Camel(%v) = %v, want %v", tt.args.str, got, tt.want)
 			}
+			fmt.Println("this won't print if it fails")
 		})
 	}
 }
