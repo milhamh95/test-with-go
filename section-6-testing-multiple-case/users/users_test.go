@@ -70,49 +70,54 @@ func TestUserStore_Find(t *testing.T) {
 	us := &UserStore{
 		sql: db,
 	}
+	t.Run("Find", testUserStore_Find(us))
 
-	jon := &User{
-		Name:  "Jon Calhoun",
-		Email: "jon@calhoun.io",
-	}
+}
 
-	// insert data to database
-	err = us.Create(jon)
-	if err != nil {
-		t.Errorf("us.Create() err = %s", err)
-	}
-	t.Logf("Success insert new data to user table")
-
-	// defer delete data
-	defer func() {
-		err := us.Delete(jon.ID)
-		if err != nil {
-			t.Errorf("us.Delete() err = %s", err)
+func testUserStore_Find(us *UserStore) func(t *testing.T) {
+	return func(t *testing.T) {
+		jon := &User{
+			Name:  "Jon Calhoun",
+			Email: "jon@calhoun.io",
 		}
-		t.Logf("Sucess delete data for id : %d", jon.ID)
-	}()
 
-	// table driven test cases
-	tests := []struct {
-		name    string
-		id      int
-		want    *User
-		wantErr error
-	}{
-		{"Found", jon.ID, jon, nil},
-		{"Not Found", -1, nil, ErrorNotFound},
-	}
+		// insert data to database
+		err := us.Create(jon)
+		if err != nil {
+			t.Errorf("us.Create() err = %s", err)
+		}
+		t.Logf("Success insert new data to user table")
 
-	for _, tc := range tests {
-		t.Run(tc.name, func(t *testing.T) {
-			got, err := us.Find(tc.id)
-			if err != tc.wantErr {
-				t.Errorf("us.Find() err = %s", err)
+		// defer delete data
+		defer func() {
+			err := us.Delete(jon.ID)
+			if err != nil {
+				t.Errorf("us.Delete() err = %s", err)
 			}
-			if !reflect.DeepEqual(got, tc.want) {
-				t.Errorf("us.Find() = %+v, want %+v", got, tc.want)
-			}
-		})
-	}
+			t.Logf("Sucess delete data for id : %d", jon.ID)
+		}()
 
+		// table driven test cases
+		tests := []struct {
+			name    string
+			id      int
+			want    *User
+			wantErr error
+		}{
+			{"Found", jon.ID, jon, nil},
+			{"Not Found", -1, nil, ErrorNotFound},
+		}
+
+		for _, tc := range tests {
+			t.Run(tc.name, func(t *testing.T) {
+				got, err := us.Find(tc.id)
+				if err != tc.wantErr {
+					t.Errorf("us.Find() err = %s", err)
+				}
+				if !reflect.DeepEqual(got, tc.want) {
+					t.Errorf("us.Find() = %+v, want %+v", got, tc.want)
+				}
+			})
+		}
+	}
 }
