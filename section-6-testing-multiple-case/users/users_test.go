@@ -2,14 +2,20 @@ package users
 
 import (
 	"database/sql"
+	"fmt"
+	"os"
 	"reflect"
 	"testing"
 
 	_ "github.com/lib/pq"
 )
 
-func TestUserStore_Find(t *testing.T) {
-	// TestUserStore_Find - query to create and drop db, and create user table for testing
+func TestMain(m *testing.M) {
+	exitCode := run(m)
+	os.Exit(exitCode)
+}
+
+func run(m *testing.M) int {
 	const (
 		createDB        = `CREATE DATABASE test_user_store`
 		dropDB          = `DROP DATABASE IF EXISTS test_user_store`
@@ -23,48 +29,60 @@ func TestUserStore_Find(t *testing.T) {
 	// connect to postgres
 	psql, err := sql.Open("postgres", "host=localhost port=5432 user=cocowork password=rahasia sslmode=disable")
 	if err != nil {
-		t.Fatalf("sql.Open() err = %s", err)
+		panic(fmt.Errorf("sql.Open() err = %s", err))
 	}
-	t.Logf("Success connect to postgres")
+	fmt.Println("Success connect to postgres")
 	defer psql.Close()
 
 	// drop database if exist
 	_, err = psql.Exec(dropDB)
 	if err != nil {
-		t.Fatalf("Failed to drop db err = %s", err)
+		panic(fmt.Errorf("Failed to drop db err = %s", err))
 	}
-	t.Logf("Success drop db")
+	fmt.Println("Success drop db")
 
 	// create database if exists
 	_, err = psql.Exec(createDB)
 	if err != nil {
-		t.Fatalf("Failed to create db err = %s", err)
+		panic(fmt.Errorf("Failed to create db err = %s", err))
 	}
-	t.Logf("Success create db")
+	fmt.Println("Success create db")
 
 	// defer delete db after test is completed
 	defer func() {
 		_, err = psql.Exec(dropDB)
 		if err != nil {
-			t.Errorf("Failed to drop db err = %s", err)
+			panic(fmt.Errorf("Failed to drop db err = %s", err))
 		}
-		t.Logf("Success to drop db")
+		fmt.Println("Success to drop db")
 	}()
 
 	// connect to spesific db in postgres
 	db, err := sql.Open("postgres", "host=localhost port=5432 user=cocowork password=rahasia sslmode=disable dbname=test_user_store")
 	if err != nil {
-		t.Fatalf("sql.Open() err = %s", err)
+		panic(fmt.Errorf("sql.Open() err = %s", err))
 	}
-	t.Logf("Success connect to test_user_store db")
+	fmt.Println("Success connect to test_user_store db")
 	defer db.Close()
 
 	// create user table
 	_, err = db.Exec(createUserTable)
 	if err != nil {
-		t.Fatalf("db.Exec() err = %s", err)
+		panic(fmt.Errorf("db.Exec() err = %s", err))
 	}
-	t.Logf("Success create user table")
+	fmt.Println("Success create user table")
+
+	return m.Run()
+}
+
+func TestUserStore(t *testing.T) {
+	// TestUserStore_Find - query to create and drop db, and create user table for testing
+	db, err := sql.Open("postgres", "host=localhost port=5432 user=cocowork password=rahasia sslmode=disable dbname=test_user_store")
+	if err != nil {
+		panic(fmt.Errorf("sql.Open() err = %s", err))
+	}
+	fmt.Println("Success connect to test_user_store db")
+	defer db.Close()
 
 	// create user store object
 	us := &UserStore{
