@@ -68,3 +68,15 @@ func (us *UserStore) Delete(id int) error {
 	}
 	return nil
 }
+
+func Spend(us interface {
+	Find(int) (*User, error)
+	Update(*User) error
+}, userID int, amount int) error {
+	user, err := us.Find(userID)
+	if err != nil {
+		return err
+	}
+	user.Balance -= amount
+	return us.Update(user)
+}
