@@ -48,6 +48,7 @@ func TestPtr(t *testing.T) {
 		Age:  3,
 	}
 	t.Logf("morty=%p, morty2=%p", morty, morty2)
+	// compare two objects, handle pointer
 	if !reflect.DeepEqual(morty, morty2) {
 		t.Errorf("morty != morty2")
 	}
