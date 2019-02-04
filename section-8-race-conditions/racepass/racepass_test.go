@@ -1,4 +1,4 @@
-package racefail
+package racepass
 
 import (
 	"database/sql"
@@ -11,16 +11,6 @@ import (
 
 	_ "github.com/lib/pq"
 )
-
-func TestMain(m *testing.M) {
-	// 0. flag.Parse() if you need flags
-	err := env.Setup()
-	if err != nil {
-		panic(fmt.Errorf(err.Error()))
-	}
-	exitCode := run(m)
-	os.Exit(exitCode)
-}
 
 func getPostgresConnection() string {
 	host := os.Getenv("HOST")
@@ -39,6 +29,16 @@ func getDbConnection() string {
 	password := os.Getenv("PASSWORD")
 	dbConnection := fmt.Sprintf("host=%s dbname=%s port=%s user=%s sslmode=disable password=%s", host, dbName, port, username, password)
 	return dbConnection
+}
+
+func TestMain(m *testing.M) {
+	err := env.Setup()
+	if err != nil {
+		panic(fmt.Errorf(err.Error()))
+	}
+	// 0. flag.Parse() if you need flags
+	exitCode := run(m)
+	os.Exit(exitCode)
 }
 
 func run(m *testing.M) int {
@@ -91,7 +91,7 @@ func run(m *testing.M) int {
 }
 
 type racyUserStore struct {
-	*UserStore
+	UserStore
 	wg *sync.WaitGroup
 }
 
@@ -112,7 +112,8 @@ func TestSpend_race(t *testing.T) {
 		panic(fmt.Errorf("sql.Open() err = %s", err))
 	}
 	defer db.Close()
-	us := &UserStore{
+	us := &PsqlUserStore{
+		tx:  db,
 		sql: db,
 	}
 	jon := &User{
