@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"test-with-go/math"
+	"test-with-go/section-2-test-just-go-code/math"
 )
 
 func main() {
