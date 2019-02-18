@@ -21,3 +21,26 @@ go test -v -integration
 ```
 
 it will make integration variable value become true
+
+## 42 - build tags
+To create custom tags, in the beginning of the files, need to add custom build tags
+
+```go
+// +build [tag_name]
+```
+
+example
+
+```go
+// +build mysql
+```
+
+to run :
+
+```sh
+go test -v -tags=mysql
+```
+
+```sh
+go test -v -tags="mysql"
+```
