@@ -39,6 +39,10 @@ func TestFib(t *testing.T) {
 		t.Run(name, func(t *testing.T) {
 			for _, tc := range tests {
 				// run the functions for recursrive, iterative, memo
+				if testing.Verbose() {
+					t.Logf("Testing %d", tc.arg)
+				}
+				t.Logf("Testing %d", tc.arg)
 				got := fn(tc.arg)
 				if got != tc.want {
 					t.Errorf("Fib(%d) = %d; want %d", tc.arg, got, tc.want)
