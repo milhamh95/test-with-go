@@ -10,6 +10,12 @@ To run all test in subpackages
 go test ./...
 ```
 
+It will cache test result. To delete cache test result:
+
+```go
+go clean -testcache
+```
+
 To see list of package
 ```sh
 for pkg in *; do echo "./$pkg"; done
