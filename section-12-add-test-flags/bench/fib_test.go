@@ -1,6 +1,9 @@
 package bench
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 func TestFib(t *testing.T) {
 	tests := []struct {
@@ -69,6 +72,18 @@ func benchmarkFib(b *testing.B, fib func(int) int, n int) {
 // 		FibRecursive(10)
 // 	}
 // }
+
+func TestFibMemoThreadsafe_threadsafe(t *testing.T) {
+	var wg sync.WaitGroup
+	wg.Add(20)
+	for i := 0; i < 20; i++ {
+		go func() {
+			FibMemoThreadSafe(125)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
 
 func BenchmarkFibRecursive5(b *testing.B) {
 	benchmarkFib(b, FibRecursive, 5)

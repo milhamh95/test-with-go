@@ -22,3 +22,16 @@ Example :
 ```go
 go test -bench BenchmarkFibMemo20-4
 ```
+
+# 46. Timeout
+
+To run
+```go
+go test -timeout [second]s
+```
+
+Example :
+
+```go
+go test -timeout 5s
+```
