@@ -50,3 +50,22 @@ shipment := createShipment(...)
 ```
 
 We might test our code with mocks and assume api will work
+
+## End to end tests
+
+Test entire application
+
+Ex1: 
+1. Start app
+2. Open chrome
+3. Navigate to your app
+4. Login as a user would
+5. And so on...
+
+Great for simultaing real user scenarions.
+
+Con : not always great at pointing at why those bugs occured or how to fix them.
+You can figure it out, but they don't tell you quickly and clearly.
+
+Joke ex (both e2e & integration): Two doors both work in isolation, but put the two together and suddenly
+the doorknobs block each other from opening!
