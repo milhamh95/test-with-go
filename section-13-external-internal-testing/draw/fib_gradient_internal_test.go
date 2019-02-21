@@ -1,10 +1,20 @@
 package draw
 
 import (
+	"fmt"
 	"testing"
 )
 
 func TestFib(t *testing.T) {
+	// osCreate = func(name string) (*os.File, error) {
+	// 	name = "/some/temp/dir/" + name
+	// 	return nil, nil
+	// }
+	// d := dog{
+	// 	name: "jon",
+	// 	age:  10,
+	// }
 	a = 321
-	fib(123)
+	fmt.Println(a)
+	fib(1)
 }
