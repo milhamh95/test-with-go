@@ -1,7 +1,6 @@
 package logger
 
 import (
-	"errors"
 	"log"
 	"os"
 )
@@ -61,5 +60,6 @@ func (t Thing) DemoV5() {
 }
 
 func doTheThing() error {
-	return errors.New("error opening file: abc.txt")
+	return nil
+	// return errors.New("error in doTheThing():")
 }
