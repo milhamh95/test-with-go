@@ -8,3 +8,10 @@
 - API may not have a test env, or it may have limits
 
 use mocks when the real thing just doesn't make practical sense
+
+## Third party package
+
+- golang/mock
+- josharian/impl -> generate method stub for implementing an interface
+- matryer/moq -> interface mocking tool
+- vscode
