@@ -34,6 +34,9 @@ func TestFibGradient(t *testing.T) {
 		}
 		png.Encode(f, im)
 		f.Close()
+		return
+
+		// can return, since it updating only golden file
 	}
 
 	f, err := os.Open(wantFile)
