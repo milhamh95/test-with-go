@@ -2,6 +2,8 @@
 
 ## bench_test.go
 
+Function should user word ***Benchmark*** in the front of the function
+
 To run test
 
 ```go
