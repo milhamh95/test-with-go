@@ -14,14 +14,15 @@ func TestFields(t *testing.T) {
 		{
 			// value in field
 			strct: struct {
-				FullName string
+				Name string
 			}{},
 			want: []field{
 				{
-					Label:       "FullName",
-					Name:        "FullName",
+					Label:       "Name",
+					Name:        "Name",
 					Type:        "text",
-					Placeholder: "FullName",
+					Placeholder: "Name",
+					Value:       "",
 				},
 			},
 		},
@@ -31,25 +32,32 @@ func TestFields(t *testing.T) {
 				Name  string
 				Email string
 				Age   int
-			}{},
+			}{
+				Name:  "Jon Calhoun",
+				Email: "jon@calhoun.io",
+				Age:   123,
+			},
 			want: []field{
 				{
 					Label:       "Name",
 					Name:        "Name",
 					Type:        "text",
 					Placeholder: "Name",
+					Value:       "Jon Calhoun",
 				},
 				{
 					Label:       "Email",
 					Name:        "Email",
 					Type:        "text",
 					Placeholder: "Email",
+					Value:       "jon@calhoun.io",
 				},
 				{
 					Label:       "Age",
 					Name:        "Age",
 					Type:        "text",
 					Placeholder: "Age",
+					Value:       123,
 				},
 			},
 		},
