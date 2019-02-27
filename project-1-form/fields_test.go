@@ -1,6 +1,7 @@
 package form
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -131,6 +132,9 @@ func TestFields(t *testing.T) {
 				},
 			},
 		},
+		// "Non-structs shouldn't work": {
+		// 	strct: "some string",
+		// },
 	}
 	for name, tc := range tests {
 		t.Run(name, func(t *testing.T) {
@@ -138,6 +142,26 @@ func TestFields(t *testing.T) {
 			if !reflect.DeepEqual(got, tc.want) {
 				t.Errorf("fields() = %v; want %v", got, tc.want)
 			}
+		})
+	}
+}
+
+func TestFields_invalidValues(t *testing.T) {
+	tests := []struct {
+		notAStruct interface{}
+	}{
+		{"this is a string"},
+		{1234},
+		{nil},
+	}
+	for _, tc := range tests {
+		t.Run(fmt.Sprintf("%v", tc.notAStruct), func(t *testing.T) {
+			defer func() {
+				if err := recover(); err == nil {
+					t.Errorf("fields(%v) did not panic", tc.notAStruct)
+				}
+			}()
+			fields(tc.notAStruct)
 		})
 	}
 }
