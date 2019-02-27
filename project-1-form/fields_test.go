@@ -13,18 +13,18 @@ func TestFields(t *testing.T) {
 		{
 			// value in field
 			strct: struct {
-				Name string
+				FullName string
 			}{},
 			want: field{
-				Label:       "Name",
-				Name:        "Name",
+				Label:       "FullName",
+				Name:        "FullName",
 				Type:        "text",
-				Placeholder: "Name",
+				Placeholder: "FullName",
 			},
 		},
 	}
 	for _, tc := range tests {
-		t.Run(fmt.Sprintf("%v", tc.strct), func(t *testing.T) {
+		t.Run(fmt.Sprintf("%T", tc.strct), func(t *testing.T) {
 			got := fields(tc.strct)
 			if got != tc.want {
 				t.Errorf("fields() = %v; want %v", got, tc.want)

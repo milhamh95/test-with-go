@@ -1,11 +1,21 @@
 package form
 
+import (
+	"reflect"
+)
+
 func fields(strct interface{}) field {
+	rv := reflect.ValueOf(strct)
+
+	t := rv.Type()
+
+	tf := t.Field(0)
+
 	return field{
-		Label:       "Name",
-		Name:        "Name",
+		Label:       tf.Name,
+		Name:        tf.Name,
 		Type:        "text",
-		Placeholder: "Name",
+		Placeholder: tf.Name,
 	}
 }
 
