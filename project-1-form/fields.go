@@ -4,19 +4,25 @@ import (
 	"reflect"
 )
 
-func fields(strct interface{}) field {
+func fields(strct interface{}) []field {
 	rv := reflect.ValueOf(strct)
 
 	t := rv.Type()
 
-	tf := t.Field(0)
+	var ret []field
 
-	return field{
-		Label:       tf.Name,
-		Name:        tf.Name,
-		Type:        "text",
-		Placeholder: tf.Name,
+	for i := 0; i < t.NumField(); i++ {
+		tf := t.Field(i)
+		f := field{
+			Label:       tf.Name,
+			Name:        tf.Name,
+			Type:        "text",
+			Placeholder: tf.Name,
+		}
+		ret = append(ret, f)
 	}
+	return ret
+
 }
 
 type field struct {
