@@ -26,6 +26,10 @@ func valueOf(v interface{}) reflect.Value {
 	return rv
 }
 
+func parseTags(reflect.StructField) map[string]string {
+
+}
+
 func fields(strct interface{}) []field {
 	rv := valueOf(strct)
 	if rv.Kind() != reflect.Struct {

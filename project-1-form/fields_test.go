@@ -6,6 +6,10 @@ import (
 	"testing"
 )
 
+func TestParseTags(t *testing.T) {
+
+}
+
 func TestFields(t *testing.T) {
 	var nilStructPtr *struct {
 		Name string
