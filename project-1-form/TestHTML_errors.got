@@ -1,0 +1,17 @@
+
+	<label>Email Address</label>
+	<input
+		class=""
+		type="email"
+		name="EmailAddress"
+		placeholder="you@domain.com"
+		value="email@taken.com">
+	
+	<label>Password</label>
+	<input
+		class=""
+		type="password"
+		name="Password"
+		placeholder="Password"
+		value="badpw">
+	
