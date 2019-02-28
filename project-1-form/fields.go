@@ -1,7 +1,9 @@
 package form
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 )
 
 func valueOf(v interface{}) reflect.Value {
@@ -24,10 +26,6 @@ func valueOf(v interface{}) reflect.Value {
 		rv = rv.Elem()
 	}
 	return rv
-}
-
-func parseTags(reflect.StructField) map[string]string {
-
 }
 
 func fields(strct interface{}) []field {
@@ -75,4 +73,26 @@ type field struct {
 	Type        string
 	Placeholder string
 	Value       interface{}
+}
+
+func parseTags(sf reflect.StructField) map[string]string {
+	// label=Full Name; name=full_name
+	rawTag := sf.Tag.Get("form")
+	if len(rawTag) == 0 {
+		fmt.Println("len is 0")
+		return nil
+	}
+	ret := make(map[string]string)
+	// tags = [label=Full Name, name=full_name]
+	tags := strings.Split(rawTag, ";")
+	for _, tag := range tags {
+		kv := strings.Split(tag, "=")
+		if len(kv) != 2 {
+			panic("invalid struct tag")
+		}
+		k, v := kv[0], kv[1]
+		ret[k] = v
+	}
+	return ret
+
 }
