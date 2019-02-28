@@ -1,7 +1,6 @@
 package form
 
 import (
-	"fmt"
 	"reflect"
 	"strings"
 )
@@ -28,7 +27,7 @@ func valueOf(v interface{}) reflect.Value {
 	return rv
 }
 
-func fields(strct interface{}) []field {
+func fields(strct interface{}, parentNames ...string) []field {
 	rv := valueOf(strct)
 	if rv.Kind() != reflect.Struct {
 		panic("form: invalid value; only structs are supported")
@@ -46,21 +45,25 @@ func fields(strct interface{}) []field {
 		}
 
 		if rvf.Kind() == reflect.Struct {
-			nestedFields := fields(rvf.Interface())
-			for i, nf := range nestedFields {
-				nestedFields[i].Name = tf.Name + "." + nf.Name
-			}
+			nestedParentNames := append(parentNames, tf.Name)
+			nestedFields := fields(rvf.Interface(), nestedParentNames...)
+			// for i, nf := range nestedFields {
+			// 	nestedFields[i].Name = tf.Name + "." + nf.Name
+			// }
 			ret = append(ret, nestedFields...)
 			continue
 		}
 
+		names := append(parentNames, tf.Name)
+		name := strings.Join(names, ".")
 		f := field{
 			Label:       tf.Name,
-			Name:        tf.Name,
+			Name:        name,
 			Type:        "text",
 			Placeholder: tf.Name,
 			Value:       rvf.Interface(),
 		}
+		f.apply(parseTags(tf))
 		ret = append(ret, f)
 	}
 	return ret
@@ -75,11 +78,25 @@ type field struct {
 	Value       interface{}
 }
 
+func (f *field) apply(tags map[string]string) {
+	if v, ok := tags["name"]; ok {
+		f.Name = v
+	}
+	if v, ok := tags["label"]; ok {
+		f.Label = v
+	}
+	if v, ok := tags["type"]; ok {
+		f.Type = v
+	}
+	if v, ok := tags["placeholder"]; ok {
+		f.Placeholder = v
+	}
+}
+
 func parseTags(sf reflect.StructField) map[string]string {
 	// label=Full Name; name=full_name
 	rawTag := sf.Tag.Get("form")
 	if len(rawTag) == 0 {
-		fmt.Println("len is 0")
 		return nil
 	}
 	ret := make(map[string]string)
