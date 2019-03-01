@@ -57,8 +57,10 @@ func TestClient_Charge(t *testing.T) {
 		t.Errorf("Customer() err = %v; want %v", err, nil)
 	}
 
+	_ = cus
 	// Create a customer for the test
-	cusID := cus.ID
+	cusID := "cust_123"
+	// cusID := cus.ID
 	amount := 1234
 	charge, err := c.Charge(cusID, amount)
 	if err != nil {
