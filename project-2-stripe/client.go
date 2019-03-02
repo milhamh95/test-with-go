@@ -55,9 +55,9 @@ func (c *Client) Customer(token, email string) (*Customer, error) {
 	if err != nil {
 		return nil, err
 	}
-	// if res.StatusCode >= 400 {
-	// 	return nil, parseError(body)
-	// }
+	if res.StatusCode >= 400 {
+		return nil, parseError(body)
+	}
 	var cus Customer
 	err = json.Unmarshal(body, &cus)
 	if err != nil {
@@ -67,6 +67,7 @@ func (c *Client) Customer(token, email string) (*Customer, error) {
 }
 
 func (c *Client) Charge(customerID string, amount int) (*Charge, error) {
+
 	endpoint := "https://api.stripe.com/v1/charges"
 	v := url.Values{}
 	v.Set("customer", customerID)

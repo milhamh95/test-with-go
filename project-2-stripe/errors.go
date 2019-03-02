@@ -5,6 +5,11 @@ import (
 	"fmt"
 )
 
+const (
+	ErrTypeInvalidRequest = "invalid_request_error"
+	ErrTypeCardError      = "card_error"
+)
+
 // stripe.Error
 type Error struct {
 	Code    string `json:"code"`
