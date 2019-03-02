@@ -2,7 +2,6 @@ package stripe
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -34,7 +33,7 @@ type Client struct {
 	Key string
 }
 
-func (c *Client) Customer(token string, email string) (*Customer, error) {
+func (c *Client) Customer(token, email string) (*Customer, error) {
 	endpoint := "https://api.stripe.com/v1/customers"
 	v := url.Values{}
 	v.Set("source", token)
@@ -43,11 +42,9 @@ func (c *Client) Customer(token string, email string) (*Customer, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	req.Header.Set("Stripe-Version", Version)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.SetBasicAuth(c.Key, "")
-
 	httpClient := http.Client{}
 	res, err := httpClient.Do(req)
 	if err != nil {
@@ -58,14 +55,14 @@ func (c *Client) Customer(token string, email string) (*Customer, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
-
+	// if res.StatusCode >= 400 {
+	// 	return nil, parseError(body)
+	// }
 	var cus Customer
 	err = json.Unmarshal(body, &cus)
 	if err != nil {
 		return nil, err
 	}
-
 	return &cus, nil
 }
 
@@ -79,11 +76,9 @@ func (c *Client) Charge(customerID string, amount int) (*Charge, error) {
 	if err != nil {
 		return nil, err
 	}
-
 	req.Header.Set("Stripe-Version", Version)
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	req.SetBasicAuth(c.Key, "")
-
 	httpClient := http.Client{}
 	res, err := httpClient.Do(req)
 	if err != nil {
@@ -94,13 +89,23 @@ func (c *Client) Charge(customerID string, amount int) (*Charge, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(string(body))
+	if res.StatusCode >= 400 {
+		return nil, parseError(body)
+	}
 
 	var chg Charge
 	err = json.Unmarshal(body, &chg)
 	if err != nil {
 		return nil, err
 	}
-
 	return &chg, nil
+}
+
+func parseError(data []byte) error {
+	var se Error
+	err := json.Unmarshal(data, &se)
+	if err != nil {
+		return err
+	}
+	return se
 }
