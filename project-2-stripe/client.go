@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"strconv"
 	"strings"
@@ -29,6 +30,16 @@ type Charge struct {
 	FailureMessage string `json:"failure_message"`
 	Paid           bool   `json:"paid"`
 	Status         string `json:"status"`
+}
+
+func TestClient(fakeKey string) (*http.ServeMux, *Client, func()) {
+	mux := http.NewServeMux()
+	server := httptest.NewServer(mux)
+	c := Client{
+		Key:     fakeKey,
+		BaseURL: server.URL,
+	}
+	return mux, &c, server.Close
 }
 
 type Client struct {
