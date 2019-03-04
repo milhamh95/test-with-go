@@ -11,11 +11,7 @@ import (
 )
 
 var (
-	DB     *sql.DB
-	host   string
-	port   string
-	user   string
-	dbName string
+	DB *sql.DB
 )
 
 func getPostgresConnection() string {
