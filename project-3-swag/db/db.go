@@ -3,26 +3,37 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"os"
+	envjson "test-with-go/envjson"
 	"time"
 
 	_ "github.com/lib/pq"
 )
 
 var (
-	DB *sql.DB
+	DB     *sql.DB
+	host   string
+	port   string
+	user   string
+	dbName string
 )
 
-const (
-	host    = "localhost"
-	port    = "5432"
-	user    = "jon"
-	dbName  = "swag_dev"
-	sslMode = "disable"
-)
+func getPostgresConnection() string {
+	host := os.Getenv("HOST")
+	port := os.Getenv("PORT")
+	username := os.Getenv("USERNAME")
+	password := os.Getenv("PASSWORD")
+	pqConnection := fmt.Sprintf("host=%s port=%s user=%s sslmode=disable password=%s", host, port, username, password)
+	return pqConnection
+}
 
 func init() {
-	psqlInfo := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s", host, port, user, dbName, sslMode)
-	db, err := sql.Open("postgres", psqlInfo)
+	err := envjson.Setup()
+	if err != nil {
+		panic(err)
+	}
+	pqConnection := getPostgresConnection()
+	db, err := sql.Open("postgres", pqConnection)
 	if err != nil {
 		panic(err)
 	}
