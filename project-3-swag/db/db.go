@@ -11,19 +11,16 @@ import (
 )
 
 var (
-	DB     *sql.DB
-	host   string
-	port   string
-	user   string
-	dbName string
+	DB *sql.DB
 )
 
 func getPostgresConnection() string {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
+	dbName := os.Getenv("DB")
 	username := os.Getenv("USERNAME")
 	password := os.Getenv("PASSWORD")
-	pqConnection := fmt.Sprintf("host=%s port=%s user=%s sslmode=disable password=%s", host, port, username, password)
+	pqConnection := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, dbName)
 	return pqConnection
 }
 
