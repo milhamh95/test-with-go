@@ -20,9 +20,14 @@ var (
 )
 
 const (
-	tokenAmex        = "tok_amex"
-	tokenInvalid     = "tok_alsdkjfa"
-	tokenExpiredCard = "tok_chargeDeclinedExpiredCard"
+	tokenAmex               = "tok_amex"
+	tokenInvalid            = "tok_alsdkjfa"
+	tokenExpiredCard        = "tok_chargeDeclinedExpiredCard"
+	tokenMastercardPrePaid  = "tok_mastercard_prepaid"
+	tokenVisaDebit          = "tok_visa_debit"
+	tokenIncorrectCVC       = "tok_chargeDeclinedIncorrectCvc"
+	tokenInsufficientFunds  = "tok_chargeDeclinedInsufficientFunds"
+	tokenChargeCustomerFail = "tok_chargeCustomerFail"
 )
 
 func init() {
@@ -242,6 +247,16 @@ func TestClient_Customer(t *testing.T) {
 			email:  "test@testwithgo.com",
 			checks: check(hasErrType(stripe.ErrTypeCardError)),
 		},
+		"incorrect cvc": {
+			token:  tokenIncorrectCVC,
+			email:  "test@testwithgo.com",
+			checks: check(hasErrType(stripe.ErrTypeCardError)),
+		},
+		"insufficient funds": {
+			token:  tokenInsufficientFunds,
+			email:  "test@testwithgo.com",
+			checks: check(hasErrType(stripe.ErrTypeCardError)),
+		},
 	}
 
 	for name, tc := range tests {
@@ -308,15 +323,25 @@ func TestClient_Charge(t *testing.T) {
 		amount     int
 		checks     []checkFn
 	}{
-		"valid charge": {
+		"valid charge with amex": {
 			customerID: customerViaToken(tokenAmex),
 			amount:     1234,
 			checks:     check(hasNoErr(), hasAmount(1234)),
 		},
-		"invalid customer id": {
-			customerID: func(*testing.T, *stripe.Client) string { return "cus_missing" },
-			amount:     1234,
-			checks:     check(hasErrType(stripe.ErrTypeInvalidRequest)),
+		"valid charge with visa debit": {
+			customerID: customerViaToken(tokenVisaDebit),
+			amount:     9289,
+			checks:     check(hasNoErr(), hasAmount(9289)),
+		},
+		"valid charge with mastercard prepaid": {
+			customerID: customerViaToken(tokenMastercardPrePaid),
+			amount:     3453,
+			checks:     check(hasNoErr(), hasAmount(3453)),
+		},
+		"charge failure": {
+			customerID: customerViaToken(tokenChargeCustomerFail),
+			amount:     5555,
+			checks:     check(hasErrType(stripe.ErrTypeCardError)),
 		},
 	}
 	for name, tc := range tests {
