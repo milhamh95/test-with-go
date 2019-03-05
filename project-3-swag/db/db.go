@@ -4,7 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"os"
-	envjson "test-with-go/envjson"
+	"strings"
+	envjson "test-with-go/project-3-swag/helper"
+
 	"time"
 
 	_ "github.com/lib/pq"
@@ -14,28 +16,44 @@ var (
 	DB *sql.DB
 )
 
-func getPostgresConnection() string {
+func GetPostgresConnection() string {
 	host := os.Getenv("HOST")
 	port := os.Getenv("PORT")
 	dbName := os.Getenv("DB")
 	username := os.Getenv("USERNAME")
-	password := os.Getenv("PASSWORD")
-	pqConnection := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", host, port, username, password, dbName)
+	pqConnection := fmt.Sprintf("postgres://%s@%s:%s/%s?sslmode=disable", username, host, port, dbName)
 	return pqConnection
 }
 
 func init() {
-	err := envjson.Setup()
+	var path string
+	path = "config/env.json"
+
+	if strings.HasSuffix(os.Args[0], ".test") {
+		path = "../config/env.json"
+	}
+
+	err := envjson.Setup(path)
 	if err != nil {
 		panic(err)
 	}
-	pqConnection := getPostgresConnection()
-	db, err := sql.Open("postgres", pqConnection)
+
+	pqConnection := GetPostgresConnection()
+	err = Open(pqConnection)
 	if err != nil {
 		panic(err)
+	}
+
+}
+
+func Open(psqlURL string) error {
+	db, err := sql.Open("postgres", psqlURL)
+	if err != nil {
+		return err
 	}
 	// Be sure to close the DB!
 	DB = db
+	return nil
 }
 
 type Campaign struct {

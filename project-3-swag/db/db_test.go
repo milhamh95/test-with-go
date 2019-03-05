@@ -1,10 +1,26 @@
 package db_test
 
 import (
+	"os"
 	"test-with-go/project-3-swag/db"
 	"testing"
 	"time"
 )
+
+var (
+	psqlURL string
+)
+
+func init() {
+	testURL := os.Getenv("PSQL_URL")
+	if testURL == "" {
+		testURL = db.GetPostgresConnection()
+	}
+	if db.DB != nil {
+		db.DB.Close()
+	}
+	db.Open(testURL)
+}
 
 func TestCreateCampaign(t *testing.T) {
 
